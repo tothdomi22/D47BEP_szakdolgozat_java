@@ -8,23 +8,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const tankSlider = document.getElementById("tankDepth");
     let id;
 
-    fetch("http://localhost:3000/control-panel/data")
+    fetch("http://localhost:8080/api/control-panel")
         .then(response => response.json())
         .then(data => {
 
-            const item = data.find(obj => obj.preset == "preset1")
-
-            wateringSlider.value = item.wateringDuration,
+                const item = data.find(obj => obj.preset == "preset1")
+                wateringSlider.value = item.wateringDuration,
                 percentSlider.value = item.wateringPercent,
                 tankSlider.value = item.tankDepth
-            percentValue.innerText = `${item.wateringPercent} %`;
-            wateringValue.innerText = `${item.wateringDuration} s`;
-            tankValue.innerText = `${item.tankDepth} cm`,
+                percentValue.innerText = `${item.wateringPercent} %`;
+                wateringValue.innerText = `${item.wateringDuration} s`;
+                tankValue.innerText = `${item.tankDepth} cm`,
                 id = item.id
         })
 
     document.getElementById('preset1').addEventListener('click', function(){
-        fetch("http://localhost:3000/control-panel/data")
+        fetch("http://localhost:8080/api/control-panel")
             .then(response => response.json())
             .then(data => {
 
@@ -41,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
     })
 
     document.getElementById('preset2').addEventListener('click', function(){
-        fetch("http://localhost:3000/control-panel/data")
+        fetch("http://localhost:8080/api/control-panel")
             .then(response => response.json())
             .then(data => {
 
