@@ -30,4 +30,6 @@ public class SensorService {
         return sensorRepository.findFirstByOrderByIdDesc();
     }
 
+
+
 }

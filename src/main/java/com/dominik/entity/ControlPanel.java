@@ -1,8 +1,12 @@
 package com.dominik.entity;
 
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -10,34 +14,29 @@ import java.time.Instant;
 
 @Setter
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
-@ToString
-@Builder
-@Data
-@Entity(name = "sensordata")
-public class Sensor {
+@NoArgsConstructor
+@Entity(name = "controlpanel")
+public class ControlPanel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer id;
 
-    @Column(name = "temperature")
-    private Double temperature;
+    @Column(name = "preset")
+    private String preset;
 
-    @Column(name = "humidity")
-    private Double humidity;
+    @Column(name = "wateringDuration")
+    private Integer wateringDuration;
 
-    @Column(name = "moisture")
-    private Integer moisture;
+    @Column(name = "wateringPercent")
+    private Integer wateringPercent;
 
-    @Column(name = "waterLevel")
-    private Integer waterLevel;
+    @Column(name = "tankDepth")
+    private Integer tankDepth;
 
-    @Column(name = "light")
-    private Integer light;
-
-    @Column(name = "createdAt", nullable = false, updatable = false)
+    @Column(name = "createdAt")
     @CreatedDate
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
     private Instant createdAt;
@@ -45,5 +44,7 @@ public class Sensor {
     @Column(name = "updatedAt")
     @LastModifiedDate
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
-    private Instant updateAt;
+    private Instant updatedAt;
+
+
 }
