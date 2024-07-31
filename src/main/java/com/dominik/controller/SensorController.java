@@ -5,7 +5,6 @@ import com.dominik.entity.Sensor;
 import com.dominik.service.SensorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController

@@ -8,13 +8,28 @@ import org.springframework.web.servlet.view.RedirectView;
 @Controller
 public class HomeController {
 
-    @GetMapping("/test")
-    public RedirectView getControlPanel() {
-        return new RedirectView("/control-panel.html");
+    @GetMapping("/user/hello")
+    public String userHello() {
+        return "hello user";
     }
 
-    @GetMapping("/xd")
-    public String hello(){
-        return "test";
+    @GetMapping("/admin/hello")
+    public String adminHello() {
+        return "hello admin";
     }
+
+    @GetMapping("/")
+    public RedirectView serveIndex() {
+        return new RedirectView("/index.html");
+    }
+
+    @GetMapping("/newregister")
+    public RedirectView serverRegister() {
+        return new RedirectView("/newregister.html");
+    }
+
+//    @GetMapping("/login")
+//    public String handleLogin(){
+//        return"/login.html";
+//    }
 }
