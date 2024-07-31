@@ -45,6 +45,8 @@ public class SecurityConfiguration {
                 .build();
     }
 
+
+//    in memory solution
 //    @Bean
 //    public UserDetailsService userDetailsService() {
 //        UserDetails normalUser = User.builder()
