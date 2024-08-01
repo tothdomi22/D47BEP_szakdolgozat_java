@@ -9,7 +9,7 @@
 <body>
 
 <script>document.addEventListener('DOMContentLoaded', function() {
-    fetch('/current_user')
+    fetch('/api/current-user')
         .then(response => response.json())
         .then(data => {
             document.getElementById('dropdown_link').innerText = data.username;
