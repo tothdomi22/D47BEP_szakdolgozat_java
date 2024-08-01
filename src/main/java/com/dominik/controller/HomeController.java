@@ -28,6 +28,10 @@ public class HomeController {
         return new RedirectView("/newregister.html");
     }
 
+    @GetMapping("/admin/users")
+    public RedirectView usersList() {
+        return new RedirectView("/users.html");
+    }
 //    @GetMapping("/login")
 //    public String handleLogin(){
 //        return"/login.html";

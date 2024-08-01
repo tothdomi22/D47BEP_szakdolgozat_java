@@ -3,11 +3,17 @@ package com.dominik.controller;
 import com.dominik.entity.User;
 import com.dominik.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class AuthController {
@@ -29,5 +35,17 @@ public class AuthController {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return new RedirectView("/index.html");  // Redirect after successful registration
+    }
+
+    @GetMapping("/api/current-user")
+    public UserDetails currentUser(@AuthenticationPrincipal UserDetails currentUser) {
+        return currentUser;
+    }
+
+
+
+    @GetMapping("/admin/users_list")
+    public List<String> getAllUsers(){
+        return userRepository.getAllUsername();
     }
 }

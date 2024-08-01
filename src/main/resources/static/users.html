@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+<body>
+
+<script>document.addEventListener('DOMContentLoaded', function() {
+    fetch('/api/current-user')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('dropdown_link').innerText = data.username
+        })
+})</script>
+
+
+<nav class="navbar navbar-expand-md bg-white shadow-sm">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">Arduino Thingy</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarText">
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/control-panel">Control Panel</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a href="/admin/users" class="nav-link">Users</a>
+                    </li>
+                </ul>
+                <!-- Left Side Of Navbar -->
+
+
+                <!-- Right Side Of Navbar -->
+                <ul class="navbar-nav ms-auto">
+                    <!-- Authentication Links -->
+                    <li class="nav-item dropdown">
+                        <a id="dropdown_link" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+
+                        </a>
+                        <ul class="dropdown-menu">
+                            <a class="dropdown-item" href="/logout">Logout</a>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<main class="py-4">
+    <div class="container">
+        <div>
+            <ul id="users_list" class="list-group">
+
+            </ul>
+        </div>
+    </div>
+</main>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function(){
+        const usersList = document.getElementById('users_list')
+
+        function setAdmin(button, node, usersList){
+            button.setAttribute('class', 'btn btn-danger');
+            button.textContent = 'Remove Admin';
+            node.appendChild(button);
+            usersList.appendChild(node);
+            button.addEventListener('click', (event) => {
+                const userID = event.target.getAttribute('data-id')
+                fetch(`/admin/users/addAdmin/${userID}`, {
+                    method: "put",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(removeAdmin(button, node, usersList))
+            })
+        }
+
+        function removeAdmin (button, node, usersList) {
+            button.setAttribute('class', 'btn btn-success');
+            button.textContent = 'Set Admin';
+            node.appendChild(button);
+            usersList.appendChild(node);
+            buttonAdmin.setAttribute('data-id', data[i].id)
+            buttonAdmin.addEventListener('click', (event) => {
+                const userID = event.target.getAttribute('data-id')
+                fetch(`/admin/users/removeAdmin/${userID}`, {
+                    method: "put",
+                    headers: {
+                        'Content-Type' : 'application/json'
+                    }
+                })
+                    .then(setAdmin(button, node, usersList))
+            })
+        }
+
+        fetch("/admin/users_list")
+            .then(res => res.json())
+            .then(data => {
+                for(let i = 0; i<data.length; i++) {
+                    const node = document.createElement("li")
+                    const textnode = document.createTextNode(i+1 + ". " + data[i])
+                    node.setAttribute('class', 'list-group-item')
+                    node.appendChild(textnode);
+
+                    //delete button
+
+                    const buttonDel = document.createElement("button");
+                    buttonDel.textContent = "Delete"
+                    buttonDel.setAttribute('data-id', data[i].id)
+                    buttonDel.setAttribute('class', 'btn btn-danger ms-1')
+
+                    node.appendChild(buttonDel);
+                    usersList.appendChild(node)
+
+                    buttonDel.addEventListener("click", function(event){
+                        const userID = event.target.getAttribute('data-id');
+                        fetch(`/admin/users/delete/${userID}`, {
+                            method: "delete",
+                            headers: {
+                                'Content-Type' : 'application/json'
+                            }
+                        })
+                            .then(node.remove())
+
+                    })
+
+                    //remove admin button
+
+                    const buttonAdmin = document.createElement("button");
+                    if (data[i].isAdmin == true) {
+                        buttonAdmin.setAttribute('data-id', data[i].id)
+                        buttonAdmin.setAttribute('class', 'btn btn-danger ms-1');
+                        buttonAdmin.textContent = 'Remove Admin';
+                        node.appendChild(buttonAdmin);
+                        usersList.appendChild(node);
+
+                        buttonAdmin.addEventListener('click', (event) => {
+                            const userID = event.target.getAttribute('data-id')
+                            fetch(`/admin/users/removeAdmin/${userID}`, {
+                                method: "put",
+                                headers: {
+                                    'Content-Type' : 'application/json'
+                                }
+                            })/*
+                            .then(buttonAdmin.setAttribute('class', 'btn btn-success ms-1'))
+                            .then(buttonAdmin.textContent = "Set Admin")*/
+                                .then(window.location.reload())
+                        })
+                    } else {
+                        buttonAdmin.textContent = "Set Admin"
+                        buttonAdmin.setAttribute('data-id', data[i].id)
+                        buttonAdmin.setAttribute('class', "btn btn-success ms-1")
+                        node.appendChild(buttonAdmin)
+                        usersList.appendChild(node);
+
+                        buttonAdmin.addEventListener('click', (event) => {
+                            const userID = event.target.getAttribute('data-id')
+                            fetch(`/admin/users/addAdmin/${userID}`, {
+                                method: "put",
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            })/*
+                            .then(buttonAdmin.setAttribute('class', 'btn btn-danger ms-1'))
+                            .then(buttonAdmin.textContent = "Remove Admin")*/
+                                .then(window.location.reload())
+                        })
+                    }
+                }
+            })
+    })
+</script>
+</body>
+</html>
