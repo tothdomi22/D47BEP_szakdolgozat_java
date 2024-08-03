@@ -2,16 +2,12 @@ package com.dominik.controller;
 
 import com.dominik.entity.User;
 import com.dominik.repository.UserRepository;
+import com.dominik.service.UserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.view.RedirectView;
-
+import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +18,8 @@ public class AuthController {
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private UserDetailService userDetailService;
 
 //    expects a json
 //    @PostMapping("/register")
@@ -31,10 +29,20 @@ public class AuthController {
 //    }
 
     @PostMapping("/register")
-    public RedirectView createUser(@ModelAttribute User user) {
+    public User createUser(@ModelAttribute User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
-        return new RedirectView("/index.html");  // Redirect after successful registration
+        return user;
+    }
+
+    @PutMapping("/change-password")
+    //need to learn about fucking optional xd
+    public Optional<User> updateUser(@ModelAttribute User user) {
+        Optional<Long> userIdOptional = userDetailService.getUserId(user);
+        userIdOptional.ifPresent(user::setId);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
+        return Optional.of(user);
     }
 
     @GetMapping("/api/current-user")

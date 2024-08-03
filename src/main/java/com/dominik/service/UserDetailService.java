@@ -31,6 +31,12 @@ public class UserDetailService implements UserDetailsService {
         }
     }
 
+    public Optional<Long> getUserId(User user) {
+        Optional<User> foundUser = userRepository.findByUsername(user.getUsername());
+        return foundUser.map(User::getId);
+
+    }
+
     private String[] getRoles(User user) {
         if (user.getRole() == null) {
             return new String[]{"USER"};
