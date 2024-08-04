@@ -33,15 +33,6 @@ public class AuthController {
         return user;
     }
 
-//    @PostMapping("/change-password/store")
-//    //need to learn about fucking optional xd
-//    public Optional<User> updateUser(@ModelAttribute User user) {
-//        Optional<Long> userIdOptional = userDetailService.getUserId(user);
-//        userIdOptional.ifPresent(user::setId);
-//        user.setPassword(passwordEncoder.encode(user.getPassword()));
-//        userRepository.save(user);
-//        return Optional.of(user);
-//    }
 
     @PostMapping("/change-password/store")
         public User updateUser(@ModelAttribute User user) {

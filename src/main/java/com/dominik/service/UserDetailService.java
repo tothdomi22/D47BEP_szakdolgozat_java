@@ -3,9 +3,11 @@ package com.dominik.service;
 import com.dominik.entity.User;
 import com.dominik.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +18,10 @@ public class UserDetailService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
 
     @Override
@@ -35,19 +39,12 @@ public class UserDetailService implements UserDetailsService {
     }
 
 
-
     public User updateUser(User user) {
         User currentUser = userRepository.findByUsername(user.getUsername());
-        currentUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        currentUser.setPassword(passwordEncoder().encode(user.getPassword()));
         userRepository.save(currentUser);
         return currentUser;
     }
-
-//    public Optional<Long> getUserId(User user) {
-//        Optional<User> foundUser = userRepository.findByUsername(user.getUsername());
-//        return foundUser.map(User::getId);
-//
-//    }
 
 
 
