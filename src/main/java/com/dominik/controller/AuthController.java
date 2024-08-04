@@ -17,8 +17,6 @@ public class AuthController {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
     private UserDetailService userDetailService;
 
 //    expects a json
@@ -30,20 +28,25 @@ public class AuthController {
 
     @PostMapping("/register")
     public User createUser(@ModelAttribute User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        //user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return user;
     }
 
-    @PutMapping("/change-password")
-    //need to learn about fucking optional xd
-    public Optional<User> updateUser(@ModelAttribute User user) {
-        Optional<Long> userIdOptional = userDetailService.getUserId(user);
-        userIdOptional.ifPresent(user::setId);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
-        return Optional.of(user);
-    }
+//    @PostMapping("/change-password/store")
+//    //need to learn about fucking optional xd
+//    public Optional<User> updateUser(@ModelAttribute User user) {
+//        Optional<Long> userIdOptional = userDetailService.getUserId(user);
+//        userIdOptional.ifPresent(user::setId);
+//        user.setPassword(passwordEncoder.encode(user.getPassword()));
+//        userRepository.save(user);
+//        return Optional.of(user);
+//    }
+
+    @PostMapping("/change-password/store")
+        public User updateUser(@ModelAttribute User user) {
+        return userDetailService.updateUser(user);
+        }
 
     @GetMapping("/api/current-user")
     public UserDetails currentUser(@AuthenticationPrincipal UserDetails currentUser) {
