@@ -112,7 +112,7 @@
             .then(data => {
                 for(let i = 0; i<data.length; i++) {
                     const node = document.createElement("li")
-                    const textnode = document.createTextNode(i+1 + ". " + data[i])
+                    const textnode = document.createTextNode(i+1 + ". " + data[i].username)
                     node.setAttribute('class', 'list-group-item')
                     node.appendChild(textnode);
 
@@ -128,7 +128,7 @@
 
                     buttonDel.addEventListener("click", function(event){
                         const userID = event.target.getAttribute('data-id');
-                        fetch(`/admin/users/delete/${userID}`, {
+                        fetch(`/delete/${userID}`, {
                             method: "delete",
                             headers: {
                                 'Content-Type' : 'application/json'
@@ -141,7 +141,7 @@
                     //remove admin button
 
                     const buttonAdmin = document.createElement("button");
-                    if (data[i].isAdmin == true) {
+                    if (data[i].role === "ADMIN") {
                         buttonAdmin.setAttribute('data-id', data[i].id)
                         buttonAdmin.setAttribute('class', 'btn btn-danger ms-1');
                         buttonAdmin.textContent = 'Remove Admin';
@@ -149,8 +149,9 @@
                         usersList.appendChild(node);
 
                         buttonAdmin.addEventListener('click', (event) => {
+                            console.log("clicked remove")
                             const userID = event.target.getAttribute('data-id')
-                            fetch(`/admin/users/removeAdmin/${userID}`, {
+                            fetch(`/remove-admin/${userID}`, {
                                 method: "put",
                                 headers: {
                                     'Content-Type' : 'application/json'
@@ -169,7 +170,7 @@
 
                         buttonAdmin.addEventListener('click', (event) => {
                             const userID = event.target.getAttribute('data-id')
-                            fetch(`/admin/users/addAdmin/${userID}`, {
+                            fetch(`/add-admin/${userID}`, {
                                 method: "put",
                                 headers: {
                                     'Content-Type': 'application/json'

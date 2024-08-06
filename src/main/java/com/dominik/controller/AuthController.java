@@ -28,16 +28,33 @@ public class AuthController {
 
     @PostMapping("/register")
     public User createUser(@ModelAttribute User user) {
-        //user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userDetailService.createUser(user);
+    }
+
+    @PutMapping("/remove-admin/{id}")
+    public User removeAdmin(@PathVariable("id") User user) {
+        user.setRole("USER");
+        userRepository.save(user);
+        return user;
+    }
+
+    @PutMapping("/add-admin/{id}")
+    public User addAdmin(@PathVariable("id") User user) {
+        user.setRole("ADMIN");
         userRepository.save(user);
         return user;
     }
 
 
     @PostMapping("/change-password/store")
-        public User updateUser(@ModelAttribute User user) {
+    public User updateUser(@ModelAttribute User user) {
         return userDetailService.updateUser(user);
-        }
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public void  deleteUser(@PathVariable("id") User user) {
+        userRepository.delete(user);
+    }
 
     @GetMapping("/api/current-user")
     public UserDetails currentUser(@AuthenticationPrincipal UserDetails currentUser) {
@@ -47,7 +64,7 @@ public class AuthController {
 
 
     @GetMapping("/admin/users_list")
-    public List<String> getAllUsers(){
-        return userRepository.getAllUsername();
+    public List<User> getAllUsers(){
+        return userRepository.findAll();
     }
 }
