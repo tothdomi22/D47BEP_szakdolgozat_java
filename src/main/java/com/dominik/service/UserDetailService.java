@@ -38,7 +38,6 @@ public class UserDetailService implements UserDetailsService {
         }
     }
 
-
     public User updateUser(User user) {
         User currentUser = userRepository.findByUsername(user.getUsername());
         currentUser.setPassword(passwordEncoder().encode(user.getPassword()));

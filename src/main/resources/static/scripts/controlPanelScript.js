@@ -6,53 +6,58 @@ document.addEventListener("DOMContentLoaded", () => {
     const percentValue = document.getElementById("wateringPercentValue");
     const tankValue = document.getElementById("tankDepthValue");
     const tankSlider = document.getElementById("tankDepth");
+    let preset;
     let id;
+
 
     fetch("http://localhost:8080/api/control-panel")
         .then(response => response.json())
         .then(data => {
 
-                const item = data.find(obj => obj.preset == "preset1")
-                wateringSlider.value = item.wateringDuration,
-                percentSlider.value = item.wateringPercent,
-                tankSlider.value = item.tankDepth
+                const item = data.find(obj => obj.preset === "preset1")
+                wateringSlider.value = item.wateringDuration;
+                percentSlider.value = item.wateringPercent;
+                tankSlider.value = item.tankDepth;
                 percentValue.innerText = `${item.wateringPercent} %`;
                 wateringValue.innerText = `${item.wateringDuration} s`;
-                tankValue.innerText = `${item.tankDepth} cm`,
-                id = item.id
+                tankValue.innerText = `${item.tankDepth} cm`;
+                id = item.id;
+                preset = item.preset;
         })
 
     document.getElementById('preset1').addEventListener('click', function(){
-        fetch("http://localhost:8080/api/control-panel")
+        fetch("api/control-panel")
             .then(response => response.json())
             .then(data => {
 
-                const item = data.find(obj => obj.preset == "preset1")
+                const item = data.find(obj => obj.preset === "preset1")
 
-                wateringSlider.value = item.wateringDuration,
-                    percentSlider.value = item.wateringPercent,
-                    tankSlider.value = item.tankDepth
+                preset = item.preset;
+                wateringSlider.value = item.wateringDuration;
+                percentSlider.value = item.wateringPercent;
+                tankSlider.value = item.tankDepth;
                 percentValue.innerText = `${item.wateringPercent} %`;
                 wateringValue.innerText = `${item.wateringDuration} s`;
-                tankValue.innerText = `${item.tankDepth} cm`,
-                    id = item.id
+                tankValue.innerText = `${item.tankDepth} cm`;
+                id = item.id;
             })
     })
 
     document.getElementById('preset2').addEventListener('click', function(){
-        fetch("http://localhost:8080/api/control-panel")
+        fetch("api/control-panel")
             .then(response => response.json())
             .then(data => {
 
-                const item = data.find(obj => obj.preset == "preset2")
+                const item = data.find(obj => obj.preset === "preset2")
 
-                wateringSlider.value = item.wateringDuration,
-                    percentSlider.value = item.wateringPercent,
-                    tankSlider.value = item.tankDepth
+                wateringSlider.value = item.wateringDuration;
+                preset = item.preset;
+                percentSlider.value = item.wateringPercent;
+                tankSlider.value = item.tankDepth;
                 percentValue.innerText = `${item.wateringPercent} %`;
                 wateringValue.innerText = `${item.wateringDuration} s`;
-                tankValue.innerText = `${item.tankDepth} cm`,
-                    id = item.id
+                tankValue.innerText = `${item.tankDepth} cm`;
+                id = item.id;
             })
     })
 
@@ -62,9 +67,10 @@ document.addEventListener("DOMContentLoaded", () => {
             wateringDuration: document.getElementById('wateringDuration').value,
             wateringPercent: document.getElementById('wateringPercent').value,
             tankDepth: document.getElementById('tankDepth').value,
+            preset: preset,
             id: id,
         };
-        fetch("http://localhost:3000/control-panel/update", {
+        fetch("api/control-panel/update", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -72,16 +78,10 @@ document.addEventListener("DOMContentLoaded", () => {
             body: JSON.stringify(formData),
         })
             .then(response => response.json())
-            .then(data => {
-                document.getElementById('errortext').innerText = data.message;
-            })
             .catch(error => {
                 console.error('Error: ', error);
             });
     })
-
-
-
 
     percentSlider.addEventListener("input", () => {
         percentValue.innerText = `${percentSlider.value} %`;
