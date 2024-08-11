@@ -13,7 +13,7 @@
         .then(response => response.json())
         .then(data => {
             document.getElementById('dropdown_link').innerText = data.username;
-            if (data.isAdmin == true) {
+            if (data.authorities[0].authority == "ROLE_ADMIN") {
                 document.getElementById('users').setAttribute('class', 'navbar-nav me-auto')
             }
         })
@@ -27,27 +27,27 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarText">
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav">
+                <!-- Left Side Of Navbar -->
+                <ul class="navbar-nav ">
                     <li class="nav-item">
                         <a class="nav-link" href="/control-panel.html">Control Panel</a>
                     </li>
                 </ul>
-                <ul class="navbar-nav me-auto">
+                <ul class="d-none" id="users">
                     <li class="nav-item">
-                        <a href="/admin/users" class="d-none">Users</a>
+                        <a href="/admin/users" class="nav-link">Users</a>
                     </li>
                 </ul>
-                <!-- Left Side Of Navbar -->
-
 
                 <!-- Right Side Of Navbar -->
                 <ul class="navbar-nav ms-auto">
                     <!-- Authentication Links -->
                     <li class="nav-item dropdown">
                         <a id="dropdown_link" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Username
+
                         </a>
-                        <ul class="dropdown-menu">
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <a href="/change-password" class="dropdown-item">Change Password</a>
                             <a class="dropdown-item" href="/logout" if()>Logout</a>
                         </ul>
                     </li>
@@ -57,12 +57,22 @@
     </div>
 </nav>
 
-
 <main class="py-4">
     <div class="container">
 
-        <h3><a id="preset1" href="#">preset1</a></h3>
-        <h3><a id="preset2" href="#">preset2</a></h3>
+        <div class="dropdown">
+            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Presets
+            </a>
+
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" id="preset1" href="#">Preset 1</a></li>
+                <li><a class="dropdown-item" id="preset2" href="#">Preset 2</a></li>
+
+            </ul>
+        </div>
+
+        <h3 id="current-preset-text" class="text-center" >Preset 1 </h3>
 
         <form id="update-form">
             <div class="mb-3">
@@ -71,7 +81,7 @@
                 <input class="form-range" type="range" name="wateringDuration" id="wateringDuration" min="0" max="100" step="1" value="1">
                 <p id="wateringValue"></p>
 
-                <label class="form-label" for="wateringPercent">watering %</label>
+                <label class="form-label" for="wateringPercent">Watering threshold</label>
                 <input class="form-range" type="range" name="wateringPercent" id="wateringPercent" min="0" max="100" step="1" value="0">
                 <p id="wateringPercentValue"></p>
 

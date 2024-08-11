@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const percentValue = document.getElementById("wateringPercentValue");
     const tankValue = document.getElementById("tankDepthValue");
     const tankSlider = document.getElementById("tankDepth");
+    const presetText = document.getElementById("current-preset-text");
     let preset;
     let id;
 
@@ -32,6 +33,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const item = data.find(obj => obj.preset === "preset1")
 
+
+                presetText.innerText = "Preset 1";
                 preset = item.preset;
                 wateringSlider.value = item.wateringDuration;
                 percentSlider.value = item.wateringPercent;
@@ -50,6 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const item = data.find(obj => obj.preset === "preset2")
 
+                presetText.innerText = "Preset 2";
                 wateringSlider.value = item.wateringDuration;
                 preset = item.preset;
                 percentSlider.value = item.wateringPercent;
