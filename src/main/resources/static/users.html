@@ -75,41 +75,6 @@
     document.addEventListener('DOMContentLoaded', function(){
         const usersList = document.getElementById('users_list')
 
-        // function setAdmin(button, node, usersList){
-        //     button.setAttribute('class', 'btn btn-danger');
-        //     button.textContent = 'Remove Admin';
-        //     node.appendChild(button);
-        //     usersList.appendChild(node);
-        //     button.addEventListener('click', (event) => {
-        //         const userID = event.target.getAttribute('data-id')
-        //         fetch(`/admin/add-admin/${userID}`, {
-        //             method: "put",
-        //             headers: {
-        //                 'Content-Type': 'application/json'
-        //             }
-        //         })
-        //             .then(removeAdmin(button, node, usersList))
-        //     })
-        // }
-        //
-        // function removeAdmin (button, node, usersList) {
-        //     button.setAttribute('class', 'btn btn-success');
-        //     button.textContent = 'Set Admin';
-        //     node.appendChild(button);
-        //     usersList.appendChild(node);
-        //     buttonAdmin.setAttribute('data-id', data[i].id)
-        //     buttonAdmin.addEventListener('click', (event) => {
-        //         const userID = event.target.getAttribute('data-id')
-        //         fetch(`/admin/remove-admin/${userID}`, {
-        //             method: "put",
-        //             headers: {
-        //                 'Content-Type' : 'application/json'
-        //             }
-        //         })
-        //             .then(setAdmin(button, node, usersList))
-        //     })
-        // }
-
         fetch("/admin/users_list")
             .then(res => res.json())
             .then(data => {
@@ -152,7 +117,6 @@
                         usersList.appendChild(node);
 
                         buttonAdmin.addEventListener('click', (event) => {
-                            console.log("clicked remove")
                             const userID = event.target.getAttribute('data-id')
                             fetch(`admin/remove-admin/${userID}`, {
                                 method: "put",
