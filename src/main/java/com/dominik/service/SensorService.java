@@ -23,6 +23,10 @@ public class SensorService {
         Instant instant = Instant.now();
         sensor.setCreatedAt(instant);
         sensor.setUpdateAt(instant);
+        sensor.setHumidity(50d);
+        sensor.setLight(400);
+        sensor.setWaterLevel(43);
+        sensor.setMoisture(54);
         return sensorRepository.save(sensor);
     }
 

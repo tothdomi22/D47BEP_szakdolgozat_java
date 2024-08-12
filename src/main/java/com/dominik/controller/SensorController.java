@@ -2,9 +2,15 @@ package com.dominik.controller;
 
 
 import com.dominik.entity.Sensor;
+import com.dominik.repository.SensorRepository;
 import com.dominik.service.SensorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -13,10 +19,18 @@ public class SensorController {
 
     @Autowired
     private SensorService sensorService;
+    @Autowired
+    private SensorRepository sensorRepository;
 
     @GetMapping
     public List<Sensor> getAllSensorData() {
         return sensorService.getAllSensorData();
+    }
+
+    @PostMapping("/data")
+    public ResponseEntity<String> storeData(@RequestBody Sensor sensor) {
+        sensorService.createSensorData(sensor);
+        return ResponseEntity.ok("Data uploaded");
     }
 
     @PostMapping
