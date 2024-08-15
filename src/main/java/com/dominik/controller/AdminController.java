@@ -19,11 +19,13 @@ public class AdminController {
     @Autowired
     private UserDetailService userDetailService;
 
+    //shows the users list for the admin page
     @GetMapping("/users")
     public RedirectView usersList() {
         return new RedirectView("/users.html");
     }
 
+    //allows an admin to remove the role from a user
     @PutMapping("/remove-admin/{id}")
     public User removeAdmin(@PathVariable("id") User user) {
         user.setRole("USER");
@@ -31,6 +33,7 @@ public class AdminController {
         return user;
     }
 
+    //allows an admin to add the role to a user
     @PutMapping("/add-admin/{id}")
     public User addAdmin(@PathVariable("id") User user) {
         user.setRole("ADMIN");
