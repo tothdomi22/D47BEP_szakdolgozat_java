@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Watering System</title>
+</head>
+<body>
+<button id="waterButton">Start Watering</button>
+
+<script>
+    // Create WebSocket connection to Spring Boot backend
+    var socket = new WebSocket("ws://localhost:8080/water-websocket");
+
+    // Event listener for when the WebSocket is open
+    socket.onopen = function(event) {
+        console.log("Connected to WebSocket");
+    };
+
+    // Event listener for receiving messages from the WebSocket
+    socket.onmessage = function(event) {
+        alert("Message from server: " + event.data);
+    };
+
+    // Handle button click
+    document.getElementById("waterButton").addEventListener("click", function() {
+        socket.send("WATER"); // Send the "WATER" command to the backend
+    });
+
+    // Event listener for WebSocket closure
+    socket.onclose = function(event) {
+        console.log("WebSocket is closed");
+    };
+</script>
+</body>
+</html>
