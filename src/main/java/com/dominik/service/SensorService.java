@@ -19,11 +19,14 @@ public class SensorService {
         return sensorRepository.findAll();
     }
 
+
+    //this is the method used to store the data
     public Sensor createSensorData(Sensor sensor) {
         Instant instant = Instant.now();
         sensor.setCreatedAt(instant);
         sensor.setUpdateAt(instant);
-        sensor.setHumidity(50d);
+        //setting fix values because those sensors haven't been installed yet
+        //and it can't be NULL
         sensor.setLight(400);
         sensor.setWaterLevel(43);
         sensor.setMoisture(54);
