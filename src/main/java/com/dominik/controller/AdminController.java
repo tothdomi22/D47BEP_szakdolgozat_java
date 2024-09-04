@@ -41,6 +41,7 @@ public class AdminController {
         return user;
     }
 
+    //delete the user
     @DeleteMapping("/delete/{id}")
     public void  deleteUser(@PathVariable("id") User user) {
         userRepository.delete(user);
