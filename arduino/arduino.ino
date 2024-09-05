@@ -18,10 +18,11 @@ float hum;  //Stores humidity value
 float temp; //Stores temperature value
 int moisture; //Stores moisture value
 int distance;
+int luminance;
 
 
 // Replace with your network credentials
-const char* ssid = "SSID";
+const char* ssid = "SSD";
 const char* password = "PASSWORD";
 
 // Server details
@@ -36,7 +37,6 @@ void setup() {
   pinMode (trigpin, OUTPUT);
   pinMode (echopin, INPUT);
   pinMode (relayPin, OUTPUT);
-
 
 
   // Connect to WiFi
@@ -76,6 +76,7 @@ void loop() {
     hum = dht.readHumidity();
     temp = dht.readTemperature();
     distance = getDistance();
+    luminance = analogRead(A0);
 
 
     //Print temp and humidity values to serial monitor
@@ -87,7 +88,9 @@ void loop() {
     Serial.print(moisture);
     Serial.print(" %, Distance: ");
     Serial.print(distance);
-    Serial.println(" Cm");
+    Serial.print(" Cm, Luminance: ");
+    Serial.print(luminance);
+    Serial.println(" LUM");
 
 
 
@@ -98,7 +101,8 @@ void loop() {
     if (client.connect(server, port)) {
       Serial.println("Connected to server");
 
-      String jsonPayload = "{\"temperature\":" + String(temp) + ",\"humidity\":" + String(hum) + "}";
+      String jsonPayload = "{\"temperature\":" + String(temp) + ",\"humidity\":" + String(hum) + ",\"moisture\":" +
+                            String(moisture) + ",\"waterLevel\":" + String(distance) +  ",\"light\":" + String(luminance) +"}";
 
 
       // Create the HTTP POST request

@@ -25,11 +25,6 @@ public class SensorService {
         Instant instant = Instant.now();
         sensor.setCreatedAt(instant);
         sensor.setUpdateAt(instant);
-        //setting fix values because those sensors haven't been installed yet
-        //and it can't be NULL
-        sensor.setLight(400);
-        sensor.setWaterLevel(43);
-        sensor.setMoisture(54);
         return sensorRepository.save(sensor);
     }
 
