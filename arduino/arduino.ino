@@ -7,19 +7,25 @@
 #define DHTPIN 2     // what pin we're connected to
 #define DHTTYPE DHT22   // DHT 22  (AM2302)
 DHT dht(DHTPIN, DHTTYPE); //// Initialize DHT sensor for normal 16mhz Arduino
-
+const int relayPin = A5;
+const int dry = 810;
+const int wet = 350;
 
 //Variables
-int chk;
+int trigpin = 8;
+int echopin = 9;
 float hum;  //Stores humidity value
 float temp; //Stores temperature value
+int moisture; //Stores moisture value
+int distance;
+
 
 // Replace with your network credentials
-const char* ssid = "ssid";
-const char* password = "password";
+const char* ssid = "SSID";
+const char* password = "PASSWORD";
 
 // Server details
-const char* server = "192.168.0.102";  // Replace with your Spring Boot server IP
+const char* server = "IP";  // Replace with your Spring Boot server IP
 const int port = 8080; // Spring Boot server port
 
 
@@ -27,7 +33,9 @@ const int port = 8080; // Spring Boot server port
 void setup() {
   Serial.begin(115200);
   dht.begin();
-
+  pinMode (trigpin, OUTPUT);
+  pinMode (echopin, INPUT);
+  pinMode (relayPin, OUTPUT);
 
 
 
@@ -40,17 +48,46 @@ void setup() {
   Serial.println("Connected to WiFi");
 }
 
+//function to calculate the distance
+int getDistance(){
+  int value;
+  int duration;
+  digitalWrite(trigpin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigpin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigpin, LOW);
+  duration = pulseIn (echopin, HIGH);
+  value = duration * 0.034 / 2;
+  return value;
+}
+
+//function to start the watering
+void doWatering (int pin) {
+  digitalWrite (pin, LOW);
+  delay(5000);
+  digitalWrite (pin, HIGH);
+}
+
+
 void loop() {
 
-
+    moisture = map(analogRead(A4), wet, dry, 100, 0); //Reads the A4 pin for the humidity
     hum = dht.readHumidity();
-    temp= dht.readTemperature();
+    temp = dht.readTemperature();
+    distance = getDistance();
+
+
     //Print temp and humidity values to serial monitor
     Serial.print("Humidity: ");
     Serial.print(hum);
     Serial.print(" %, Temp: ");
     Serial.print(temp);
-    Serial.println(" Celsius");
+    Serial.print(" Celsius, Moisture: ");
+    Serial.print(moisture);
+    Serial.print(" %, Distance: ");
+    Serial.print(distance);
+    Serial.println(" Cm");
 
 
 
@@ -61,7 +98,7 @@ void loop() {
     if (client.connect(server, port)) {
       Serial.println("Connected to server");
 
-      String jsonPayload = "{\"temp\":" + String(temp) + ",\"hum\":" + String(hum) + "}";
+      String jsonPayload = "{\"temperature\":" + String(temp) + ",\"humidity\":" + String(hum) + "}";
 
 
       // Create the HTTP POST request
@@ -94,6 +131,8 @@ void loop() {
     Serial.println("WiFi not connected");
   }
 
-  // Send data every 10 seconds
-  delay(10000);
+  doWatering(relayPin);
+
+  // Send data every 30 seconds
+  delay(30000);
 }
