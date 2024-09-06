@@ -10,8 +10,11 @@ DHT dht(DHTPIN, DHTTYPE); //// Initialize DHT sensor for normal 16mhz Arduino
 const int relayPin = A5;
 const int dry = 810;
 const int wet = 350;
+const long interval = 30000;  // 30 seconds interval for data upload
+
 
 //Variables
+unsigned long previousMillis = 0;
 int trigpin = 8;
 int echopin = 9;
 float hum;  //Stores humidity value
@@ -22,7 +25,7 @@ int luminance;
 
 
 // Replace with your network credentials
-const char* ssid = "SSD";
+const char* ssid = "SSID";
 const char* password = "PASSWORD";
 
 // Server details
@@ -37,7 +40,6 @@ void setup() {
   pinMode (trigpin, OUTPUT);
   pinMode (echopin, INPUT);
   pinMode (relayPin, OUTPUT);
-
 
   // Connect to WiFi
   WiFi.begin(ssid, password);
@@ -71,72 +73,76 @@ void doWatering (int pin) {
 
 
 void loop() {
+    unsigned long currentMillis = millis();
+    // Check if it's time to upload data
+    if (currentMillis - previousMillis >= interval) {
+        previousMillis = currentMillis;
+        Serial.print("Previous millis: ");
+        Serial.println(previousMillis);
+        Serial.print("Current Millis: ");
+        Serial.println(currentMillis);
+        moisture = map(analogRead(A4), wet, dry, 100, 0); //Reads the A4 pin for the humidity
+        hum = dht.readHumidity();
+        temp = dht.readTemperature();
+        distance = getDistance();
+        luminance = analogRead(A0);
 
-    moisture = map(analogRead(A4), wet, dry, 100, 0); //Reads the A4 pin for the humidity
-    hum = dht.readHumidity();
-    temp = dht.readTemperature();
-    distance = getDistance();
-    luminance = analogRead(A0);
-
-
-    //Print temp and humidity values to serial monitor
-    Serial.print("Humidity: ");
-    Serial.print(hum);
-    Serial.print(" %, Temp: ");
-    Serial.print(temp);
-    Serial.print(" Celsius, Moisture: ");
-    Serial.print(moisture);
-    Serial.print(" %, Distance: ");
-    Serial.print(distance);
-    Serial.print(" Cm, Luminance: ");
-    Serial.print(luminance);
-    Serial.println(" LUM");
-
-
-
-  // Check if connected to WiFi
-  if (WiFi.status() == WL_CONNECTED) {
-    WiFiClient client;
-
-    if (client.connect(server, port)) {
-      Serial.println("Connected to server");
-
-      String jsonPayload = "{\"temperature\":" + String(temp) + ",\"humidity\":" + String(hum) + ",\"moisture\":" +
-                            String(moisture) + ",\"waterLevel\":" + String(distance) +  ",\"light\":" + String(luminance) +"}";
+        //Print temp and humidity values to serial monitor
+        Serial.print("Humidity: ");
+        Serial.print(hum);
+        Serial.print(" %, Temp: ");
+        Serial.print(temp);
+        Serial.print(" Celsius, Moisture: ");
+        Serial.print(moisture);
+        Serial.print(" %, Distance: ");
+        Serial.print(distance);
+        Serial.print(" Cm, Luminance: ");
+        Serial.print(luminance);
+        Serial.println(" LUM");
 
 
-      // Create the HTTP POST request
-      client.println("POST /api/v1/data HTTP/1.1");
-      client.println("Host: 192.168.0.102");
-      client.println("Content-Type: application/json");
-      client.print("Content-Length: ");
-      client.println(jsonPayload.length());
-      client.println();
-      client.println(jsonPayload);
+        // Check if connected to WiFi
+        if (WiFi.status() == WL_CONNECTED) {
+            WiFiClient client;
+            if (client.connect(server, port)) {
+                Serial.println("Connected to server");
+                String jsonPayload = "{\"temperature\":" + String(temp) + ",\"humidity\":" + String(hum) + ",\"moisture\":" +
+                String(moisture) + ",\"waterLevel\":" + String(distance) +  ",\"light\":" + String(luminance) +"}";
 
-      // Wait for the response
-      while (client.connected()) {
-        String line = client.readStringUntil('\n');
-        if (line == "\r") {
-          break;
+                // Create the HTTP POST request
+                client.println("POST /api/v1/data HTTP/1.1");
+                client.println("Host: 192.168.0.102");
+                client.println("Content-Type: application/json");
+                client.print("Content-Length: ");
+                client.println(jsonPayload.length());
+                client.println();
+                client.println(jsonPayload);
+
+                // Wait for the response
+                while (client.connected()) {
+                    String line = client.readStringUntil('\n');
+                    if (line == "\r") {
+                        break;
+                        }
+                    }
+
+                // Read the response
+                String response = client.readString();
+                Serial.println("Server response: " + response);
+
+                // Close the connection
+                client.stop();
+                }
+            else {
+                Serial.println("Connection to server failed");
+            }
         }
-      }
+        else {
+            Serial.println("WiFi not connected");
+        }
 
-      // Read the response
-      String response = client.readString();
-      Serial.println("Server response: " + response);
-
-      // Close the connection
-      client.stop();
-    } else {
-      Serial.println("Connection to server failed");
+        if (moisture < 50) {
+            doWatering(relayPin);
+        }
     }
-  } else {
-    Serial.println("WiFi not connected");
-  }
-
-  doWatering(relayPin);
-
-  // Send data every 30 seconds
-  delay(30000);
 }
