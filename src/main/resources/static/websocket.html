@@ -1,34 +1,86 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Watering System</title>
+    <meta charset="UTF-8">
+    <title>WebSocket Control</title>
+    <style>
+        #status {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .connected {
+            color: green;
+        }
+        .disconnected {
+            color: red;
+        }
+    </style>
+    <script>
+        let socket;
+
+        function connectWebSocket() {
+            socket = new WebSocket('ws://192.168.0.110:81/');  // Replace with Arduino IP
+
+            socket.onopen = function () {
+                console.log('WebSocket is connected');
+                document.getElementById('status').textContent = 'WebSocket connection established';
+                document.getElementById('status').className = 'connected';
+            };
+
+            socket.onmessage = function (event) {
+                console.log('Message received from Arduino: ' + event.data);
+            };
+
+            socket.onclose = function () {
+                console.log('WebSocket is closed');
+                document.getElementById('status').textContent = 'WebSocket connection closed. Reconnecting...';
+                document.getElementById('status').className = 'disconnected';
+                setTimeout(connectWebSocket, 3000); // Reconnect after 3 seconds
+            };
+
+            socket.onerror = function (error) {
+                console.error('WebSocket error:', error);
+                document.getElementById('status').textContent = 'WebSocket error. Reconnecting...';
+                document.getElementById('status').className = 'disconnected';
+                socket.close(); // Close and attempt to reconnect
+            };
+        }
+
+        function sendData() {
+            let data = {
+                "wateringDuration": document.getElementById('wateringDuration').value,
+                "wateringThreshold": document.getElementById('wateringThreshold').value,
+                "tankDepth": document.getElementById('tankDepth').value
+            };
+
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify(data));
+                console.log('Data sent:', data);
+            } else {
+                console.log('WebSocket is not connected');
+                document.getElementById('status').textContent = 'WebSocket is not connected';
+                document.getElementById('status').className = 'disconnected';
+            }
+        }
+
+        window.onload = function () {
+            connectWebSocket();
+        };
+    </script>
 </head>
 <body>
-<button id="waterButton">Start Watering</button>
+<h1>WebSocket Control</h1>
 
-<script>
-    // Create WebSocket connection to Spring Boot backend
-    var socket = new WebSocket("ws://localhost:8080/water-websocket");
+<label for="wateringDuration">Watering Duration:</label>
+<input type="number" id="wateringDuration" value="10"><br>
 
-    // Event listener for when the WebSocket is open
-    socket.onopen = function(event) {
-        console.log("Connected to WebSocket");
-    };
+<label for="wateringThreshold">Watering Threshold:</label>
+<input type="number" id="wateringThreshold" value="50"><br>
 
-    // Event listener for receiving messages from the WebSocket
-    socket.onmessage = function(event) {
-        alert("Message from server: " + event.data);
-    };
+<label for="tankDepth">Tank Depth:</label>
+<input type="number" id="tankDepth" value="100"><br>
 
-    // Handle button click
-    document.getElementById("waterButton").addEventListener("click", function() {
-        socket.send("WATER"); // Send the "WATER" command to the backend
-    });
-
-    // Event listener for WebSocket closure
-    socket.onclose = function(event) {
-        console.log("WebSocket is closed");
-    };
-</script>
+<button onclick="sendData()">Send Data</button>
+<div id="status">Connecting...</div>
 </body>
 </html>

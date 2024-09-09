@@ -28,7 +28,8 @@ public class SecurityConfiguration {
                     registry.requestMatchers("/home" ,"/newregister.html", "/register", "/api/v1/data").permitAll();
                     registry.requestMatchers("/admin/**").hasRole("ADMIN");
                     registry.requestMatchers("/user/**").hasRole("USER");
-                    registry.anyRequest().authenticated();
+                    registry.anyRequest().permitAll();
+                    //registry.anyRequest().authenticated();
                 })
                 .formLogin(httpSecurityFormLoginConfigurer -> {
                     httpSecurityFormLoginConfigurer
