@@ -8,7 +8,20 @@
 </head>
 <body>
 
-<script>document.addEventListener('DOMContentLoaded', function() {
+<style>
+    #status {
+        margin-top: 10px;
+        font-weight: bold;
+    }
+    .connected {
+        color: green;
+    }
+    .disconnected {
+        color: red;
+    }
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
     fetch('/api/current-user')
         .then(response => response.json())
         .then(data => {
@@ -17,7 +30,10 @@
                 document.getElementById('users').setAttribute('class', 'navbar-nav me-auto')
             }
         })
-})</script>
+})
+
+
+</script>
 
 <nav class="navbar navbar-expand-md bg-white shadow-sm">
     <div class="container-fluid">
@@ -91,8 +107,10 @@
                 <p id="errortext"></p>
 
             </div>
-            <button class="btn btn-primary" type="submit">Update</button>
+            <button onclick="sendData()" class="btn btn-primary" type="submit">Update</button>
+            <div id="status">Connecting...</div>
         </form>
+        <button onclick="sendData()">Send Data</button>
 
 
 

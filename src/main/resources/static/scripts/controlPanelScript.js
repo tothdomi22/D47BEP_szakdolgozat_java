@@ -10,6 +10,57 @@ document.addEventListener("DOMContentLoaded", () => {
     let preset;
     let id;
 
+    let socket;
+
+    function connectWebSocket() {
+        socket = new WebSocket('ws://192.168.0.110:81/');  // Replace with Arduino IP
+
+        socket.onopen = function () {
+            console.log('WebSocket is connected');
+            document.getElementById('status').textContent = 'WebSocket connection established';
+            document.getElementById('status').className = 'connected';
+        };
+
+        socket.onmessage = function (event) {
+            console.log('Message received from Arduino: ' + event.data);
+        };
+
+        socket.onclose = function () {
+            console.log('WebSocket is closed');
+            document.getElementById('status').textContent = 'WebSocket connection closed. Reconnecting...';
+            document.getElementById('status').className = 'disconnected';
+            setTimeout(connectWebSocket, 3000); // Reconnect after 3 seconds
+        };
+
+        socket.onerror = function (error) {
+            console.error('WebSocket error:', error);
+            document.getElementById('status').textContent = 'WebSocket error. Reconnecting...';
+            document.getElementById('status').className = 'disconnected';
+            socket.close(); // Close and attempt to reconnect
+        };
+    }
+
+    function sendData() {
+        let data = {
+            "wateringDuration": wateringSlider.value,
+            "wateringThreshold": percentSlider.value,
+            "tankDepth": tankSlider.value
+        };
+        console.log(data)
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.send(JSON.stringify(data));
+            console.log('Data sent:', data);
+        } else {
+            console.log('WebSocket is not connected');
+            document.getElementById('status').textContent = 'WebSocket is not connected';
+            document.getElementById('status').className = 'disconnected';
+        }
+    }
+
+    window.onload = function () {
+        connectWebSocket();
+    };
+
 
     fetch("http://localhost:8080/api/control-panel")
         .then(response => response.json())
