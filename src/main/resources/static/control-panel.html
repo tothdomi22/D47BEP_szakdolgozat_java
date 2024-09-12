@@ -33,6 +33,58 @@
 })
 
 
+    let socket;
+
+    function connectWebSocket() {
+        socket = new WebSocket('ws://192.168.0.110:81/');  // Replace with Arduino IP
+
+        socket.onopen = function () {
+            console.log('WebSocket is connected');
+            document.getElementById('status').textContent = 'WebSocket connection established';
+            document.getElementById('status').className = 'connected';
+        };
+
+        socket.onmessage = function (event) {
+            console.log('Message received from Arduino: ' + event.data);
+        };
+
+        socket.onclose = function () {
+            console.log('WebSocket is closed');
+            document.getElementById('status').textContent = 'WebSocket connection closed. Reconnecting...';
+            document.getElementById('status').className = 'disconnected';
+            setTimeout(connectWebSocket, 3000); // Reconnect after 3 seconds
+        };
+
+        socket.onerror = function (error) {
+            console.error('WebSocket error:', error);
+            document.getElementById('status').textContent = 'WebSocket error. Reconnecting...';
+            document.getElementById('status').className = 'disconnected';
+            socket.close(); // Close and attempt to reconnect
+        };
+    }
+
+    function sendData() {
+        let data = {
+            "wateringDuration": wateringDuration.value,
+            "wateringThreshold": wateringPercent.value,
+            "tankDepth": tankDepth.value
+        };
+        console.log(data)
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.send(JSON.stringify(data));
+            console.log('Data sent:', data);
+        } else {
+            console.log('WebSocket is not connected');
+            document.getElementById('status').textContent = 'WebSocket is not connected';
+            document.getElementById('status').className = 'disconnected';
+        }
+    }
+
+    window.onload = function () {
+        connectWebSocket();
+    };
+
+
 </script>
 
 <nav class="navbar navbar-expand-md bg-white shadow-sm">
@@ -110,10 +162,6 @@
             <button onclick="sendData()" class="btn btn-primary" type="submit">Update</button>
             <div id="status">Connecting...</div>
         </form>
-        <button onclick="sendData()">Send Data</button>
-
-
-
 
 
     </div>
