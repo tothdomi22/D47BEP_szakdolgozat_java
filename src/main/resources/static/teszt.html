@@ -19,7 +19,7 @@
     let socket;
 
     function connectWebSocket() {
-      socket = new WebSocket('ws://192.168.0.110:81/');  // Replace with Arduino IP
+      socket = new WebSocket('ws://192.168.0.108:81/');  // Replace with Arduino IP
 
       socket.onopen = function () {
         console.log('WebSocket is connected');
