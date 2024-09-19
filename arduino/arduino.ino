@@ -7,11 +7,11 @@
 using namespace net;
 
 // Constants
-#define DHTPIN 2           // Pin where DHT sensor is connected
-#define DHTTYPE DHT22      // Type of DHT sensor
-#define relayPin A5        // Pin for the relay
-#define dry 810            // Dry threshold for the moisture sensor
-#define wet 350            // Wet threshold for the moisture sensor
+#define DHTPIN 2       // Pin where DHT sensor is connected
+#define DHTTYPE DHT22  // Type of DHT sensor
+#define relayPin A5    // Pin for the relay
+#define dry 810        // Dry threshold for the moisture sensor
+#define wet 350        // Wet threshold for the moisture sensor
 
 DHT dht(DHTPIN, DHTTYPE);
 WebSocketServer wss(81);
@@ -22,12 +22,12 @@ const char ssid[] = "SSID";  // Change to your WiFi SSID
 const char pass[] = "PASSWORD";     // Change to your WiFi password
 
 // Variables for sensor readings
-float hum;     // Stores humidity value
-float temp;    // Stores temperature value
-int moisture;  // Stores moisture value
-int distance;  // Stores distance from ultrasonic sensor
-int luminance; // Stores luminance value
-int wateringDuration = 0;
+float hum;      // Stores humidity value
+float temp;     // Stores temperature value
+int moisture;   // Stores moisture value
+int distance;   // Stores distance from ultrasonic sensor
+int luminance;  // Stores luminance value
+int wateringDuration = 5;
 int wateringThreshold = 0;
 int tankDepth = 0;
 
@@ -54,17 +54,19 @@ int getDistance() {
 
 // Function to perform the watering task
 void doWatering(int pin) {
-  digitalWrite(pin, LOW);  // Turn the relay on
-  delay(5000);             // Water for 5 seconds (adjust as needed)
-  digitalWrite(pin, HIGH); // Turn the relay off
+  Serial.print("commencing watering!");
+  digitalWrite(pin, LOW);   // Turn the relay on
+  delay(wateringDuration*1000);              // Water for 5 seconds (adjust as needed)
+  digitalWrite(pin, HIGH);  // Turn the relay off
 }
 
 void setup() {
   Serial.begin(115200);
   dht.begin();
-  pinMode(8, OUTPUT); // Trigger pin for ultrasonic sensor
-  pinMode(9, INPUT);  // Echo pin for ultrasonic sensor
+  pinMode(8, OUTPUT);  // Trigger pin for ultrasonic sensor
+  pinMode(9, INPUT);   // Echo pin for ultrasonic sensor
   pinMode(relayPin, OUTPUT);
+  digitalWrite(relayPin, HIGH);
 
   // Connect to WiFi
   while (WiFi.status() != WL_CONNECTED) {
@@ -147,10 +149,10 @@ void loop() {
     lastTaskMillis = currentMillis;
 
     moisture = map(analogRead(A4), wet, dry, 100, 0);  // Reads moisture sensor
-    hum = dht.readHumidity();                         // Reads humidity
-    temp = dht.readTemperature();                     // Reads temperature
-    distance = getDistance();                         // Reads ultrasonic distance
-    luminance = analogRead(A0);                       // Reads luminance sensor
+    hum = dht.readHumidity();                          // Reads humidity
+    temp = dht.readTemperature();                      // Reads temperature
+    distance = getDistance();                          // Reads ultrasonic distance
+    luminance = analogRead(A0);                        // Reads luminance sensor
 
     // Print sensor data to the Serial Monitor
     Serial.print("Humidity: ");
@@ -163,7 +165,8 @@ void loop() {
     Serial.print(distance);
     Serial.print(" Cm, Luminance: ");
     Serial.print(luminance);
-    Serial.println(" LUM");
+    Serial.print(" LUM,  watering %: ");
+    Serial.println(wateringThreshold);
 
     // Check if moisture is below threshold and start watering if needed
     if (moisture < wateringThreshold) {
@@ -177,11 +180,7 @@ void loop() {
         Serial.println("Connected to Spring Boot server");
 
         // Create JSON payload
-        String jsonPayload = "{\"temperature\":" + String(temp) +
-                            ",\"humidity\":" + String(hum) +
-                            ",\"moisture\":" + String(moisture) +
-                            ",\"waterLevel\":" + String(distance) +
-                            ",\"light\":" + String(luminance) + "}";
+        String jsonPayload = "{\"temperature\":" + String(temp) + ",\"humidity\":" + String(hum) + ",\"moisture\":" + String(moisture) + ",\"waterLevel\":" + String(distance) + ",\"light\":" + String(luminance) + "}";
 
         // Send HTTP POST request
         client.println("POST /api/v1/data HTTP/1.1");
