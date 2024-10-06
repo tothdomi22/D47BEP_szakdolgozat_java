@@ -40,4 +40,9 @@ public class SensorController {
         return sensorService.getLatestData();
     }
 
+    @GetMapping("/lastweek")
+    public List<Sensor> getLastWeekData() {
+        return sensorService.getLastWeekData();
+    }
+
 }

@@ -32,6 +32,10 @@ public class SensorService {
         return sensorRepository.findFirstByOrderByIdDesc();
     }
 
+    public List<Sensor> getLastWeekData() {
+        return sensorRepository.findTop28ByOrderByIdDesc();
+    }
+
 
 
 }
