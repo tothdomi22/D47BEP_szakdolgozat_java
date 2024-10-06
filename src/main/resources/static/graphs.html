@@ -9,6 +9,9 @@
 </head>
 <body>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Link to your custom JavaScript -->
+<script defer type="module" src="/scripts/test.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         fetch('/api/current-user')
@@ -34,7 +37,7 @@
                     <a class="nav-link" href="/control-panel.html">Control Panel</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/graphs.html">Data history</a>
+                    <a class="nav-link" href="/graphs.html">Data History</a>
                 </li>
                 <li class="d-none" id="users">
                     <a class="nav-link" href="/admin/users">Users</a>
@@ -57,13 +60,12 @@
 
 <main class="py-4">
     <div class="container">
-
         <div class="row">
             <div class="col-sm-6 mb-3 mb-sm-0 text-center">
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Temperature</h5>
-                        <p class="card-text" id="temperature">NaN</p>
+                        <canvas id="temperature"></canvas>
                     </div>
                 </div>
             </div>
@@ -71,7 +73,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Humidity</h5>
-                        <p class="card-text" id="humidity">NaN</p>
+                        <canvas id="humidity"></canvas>
                     </div>
                 </div>
             </div>
@@ -79,7 +81,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Moisture</h5>
-                        <p class="card-text" id="moisture">NaN</p>
+                        <canvas id="moisture"></canvas>
                     </div>
                 </div>
             </div>
@@ -87,7 +89,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Water level</h5>
-                        <p class="card-text" id="waterLevel">NaN</p>
+                        <canvas id="waterLevel"></canvas>
                     </div>
                 </div>
             </div>
@@ -95,15 +97,15 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Light level</h5>
-                        <p class="card-text" id="light">NaN</p>
+                        <canvas id="lightLevel"></canvas>
                     </div>
                 </div>
             </div>
             <div class="col-sm-6 text-center">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Next watering (prediction)</h5>
-                        <p class="card-text" id="prediction">NaN</p>
+                        <h5 class="card-title">Placeholder</h5>
+                        <canvas id="acquisitions6"></canvas>
                     </div>
                 </div>
             </div>
@@ -111,7 +113,7 @@
 
     </div>
 </main>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
 </body>
 </html>

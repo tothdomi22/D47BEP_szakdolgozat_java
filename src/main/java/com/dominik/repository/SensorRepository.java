@@ -8,5 +8,5 @@ import java.util.List;
 public interface SensorRepository extends JpaRepository<Sensor, Integer>{
 
     Sensor findFirstByOrderByIdDesc();
-    List<Sensor> findTop28ByOrderByIdDesc();
+    List<Sensor> findTop42ByOrderByIdDesc();
 }
