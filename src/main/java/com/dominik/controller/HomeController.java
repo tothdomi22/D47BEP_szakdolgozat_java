@@ -14,7 +14,7 @@ public class HomeController {
 
     @GetMapping("/newregister")
     public RedirectView serverRegister() {
-        return new RedirectView("/newregister.html");
+        return new RedirectView("/register.html");
     }
 
     @GetMapping("/change-password")
