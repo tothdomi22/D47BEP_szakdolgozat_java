@@ -9,14 +9,20 @@
             const moistureValues = data.map(item => item.moisture);
             const waterLevelValues = data.map(item => item.waterLevel);
             const lightLevelValues = data.map(item => item.light);
+            const siteTrafficValues = [];
+
+            for (let i = 0; i < 42; i++) {
+                let randomNumber = Math.floor(Math.random() * 171); // Random number between 0 and 170 (inclusive)
+                siteTrafficValues.push(randomNumber);
+            }
+
 
             createChart('temperature', 'Temperature of the last 7 days', labels, temperatureValues)
             createChart('humidity', 'Humidity of the last 7 days', labels, humidityValues)
             createChart('moisture', 'Moisture of the last 7 days', labels, moistureValues)
             createChart('waterLevel', 'Water level of the last 7 days', labels, waterLevelValues)
             createChart('lightLevel', 'Light level of the last 7 days', labels, lightLevelValues)
-            createChart('acquisitions6', 'idk placeholder', labels, moistureValues)
-
+            createChart('siteTraffic', 'Website traffic of the last 7 days', labels, siteTrafficValues)
         })
 })();
 
@@ -34,7 +40,8 @@ function createChart(elementId, labelText, label, data) {
                         borderColor: 'rgba(54, 162, 235, 1)',
                         backgroundColor: 'rgba(54, 162, 235, 0.2)',
                         borderWidth: 2,
-                        fill: true
+                        fill: true,
+                        tension: 0.2
                     }
                 ]
             },
@@ -46,7 +53,7 @@ function createChart(elementId, labelText, label, data) {
                         },
                         title: {
                             display: true,   // Enables the title for the x-axis
-                            text: 'Date and hour',    // Static label for the x-axis
+                            text: 'Date and hour (4 hour intervals)',    // Static label for the x-axis
                             font: {
                                 size: 16     // Adjust the size of the label
                             }
