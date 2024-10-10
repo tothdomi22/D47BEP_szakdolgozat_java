@@ -58,7 +58,7 @@
             console.log('WebSocket is closed');
             document.getElementById('status').textContent = 'WebSocket connection closed. Reconnecting...';
             document.getElementById('status').className = 'disconnected';
-            setTimeout(connectWebSocket, 3000); // Reconnect after 3 seconds
+            setTimeout(connectWebSocket, 1000); // Reconnect after 1 seconds
         };
 
         socket.onerror = function (error) {
