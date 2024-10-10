@@ -36,7 +36,7 @@
     let socket;
 
     function connectWebSocket() {
-        socket = new WebSocket('ws://192.168.0.121:81/');  // Replace with Arduino IP
+        socket = new WebSocket('ws://192.168.0.114:81/');  // Replace with Arduino IP
 
         socket.onopen = function () {
             console.log('WebSocket is connected');
@@ -46,6 +46,12 @@
 
         socket.onmessage = function (event) {
             console.log('Message received from Arduino: ' + event.data);
+            if (event.data === "Plant watered successfully") {
+                alert("Plant watered successfully");
+            }
+            if (event.data === "Data received and processed") {
+                alert("Data received and processed");
+            }
         };
 
         socket.onclose = function () {
