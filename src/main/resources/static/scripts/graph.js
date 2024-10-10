@@ -55,17 +55,26 @@ function createChart(elementId, labelText, label, data) {
                             display: true,   // Enables the title for the x-axis
                             text: 'Date and hour (4 hour intervals)',    // Static label for the x-axis
                             font: {
-                                size: 16     // Adjust the size of the label
-                            }
+                                size: 12     // Adjust the size of the label
+                            },
+                            color: 'rgba(180,180,180,0.85)'
+                        },
+                        grid: {
+                            color: 'rgba(180,180,180,0.2)'
                         }
                     },
                     y: {
                         ticks: {
                             font: {
-                                size: 16
-                            }
+                                size: 12
+                            },
+                            color: 'rgba(180,180,180,0.85)'
+                        },
+                        grid: {
+                            color: 'rgba(180,180,180,0.2)'
                         }
-                    }
+                    },
+
                 }
             }
         }
