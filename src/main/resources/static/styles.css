@@ -93,3 +93,7 @@ input[type=password]:focus {
     border-color: rgba(255, 255, 255, 0.68);
     color: white;
 }
+input[type="text"][disabled] {
+    color: #858585;
+    background-color: rgba(38, 38, 51, 0.5);
+}
