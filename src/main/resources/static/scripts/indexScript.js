@@ -6,8 +6,8 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('temperature').innerText = `${data.temperature}°C`;
             document.getElementById('humidity').innerText = `${data.humidity}%`;
             document.getElementById('moisture').innerText = `${data.moisture}%`;
-            document.getElementById('waterLevel').innerText = `${data.waterLevel}cm`;
-            document.getElementById('light').innerText = `${data.light}lum`;
+            document.getElementById('waterLevel').innerText = `${data.waterLevel} cm`;
+            document.getElementById('light').innerText = `${data.light} lum`;
 
             // Now send the prediction request with the latest data
             sendPredictionRequest(data.moisture, data.humidity, data.temperature);
