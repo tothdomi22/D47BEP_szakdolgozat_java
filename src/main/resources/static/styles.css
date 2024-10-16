@@ -97,3 +97,17 @@ input[type="text"][disabled] {
     color: #858585;
     background-color: rgba(38, 38, 51, 0.5);
 }
+
+.card {
+    min-height: 120px;
+    padding: 10px;
+}
+
+.card-title {
+    padding-bottom: 20px;
+    font-size: 22px;
+}
+
+.card-text {
+    font-size: 20px;
+}

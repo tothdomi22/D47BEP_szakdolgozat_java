@@ -61,7 +61,8 @@ function createChart(elementId, labelText, label, data) {
                         },
                         grid: {
                             color: 'rgba(180,180,180,0.2)'
-                        }
+                        },
+                        reverse: true
                     },
                     y: {
                         ticks: {
