@@ -18,8 +18,8 @@ WebSocketServer wss(81);
 WiFiServer server(80);
 
 // WiFi Credentials
-const char ssid[] = "SSID";  // Change to your WiFi SSID
-const char pass[] = "PASSWORD";     // Change to your WiFi password
+const char ssid[] = "****";  // Change to your WiFi SSID
+const char pass[] = "*****";     // Change to your WiFi password
 
 // Variables for sensor readings
 float hum;      // Stores humidity value
@@ -33,10 +33,10 @@ int tankDepth = 0;
 
 // Timing variables for periodic tasks
 unsigned long lastTaskMillis = 0;
-unsigned long taskInterval = 30000;  // 30-second interval for periodic tasks
+unsigned long taskInterval = 14400000;  // 4 hour interval for periodic tasks
 
 // Server details for the Spring Boot server
-const char *springServer = "IP";  // Replace with your Spring Boot server IP
+const char *springServer = "192.168.0.106";  // Replace with your Spring Boot server IP
 const int springPort = 8080;                 // Spring Boot server port
 
 // Function to calculate the distance using ultrasonic sensor
@@ -54,7 +54,7 @@ int getDistance() {
 
 // Function to perform the watering task
 void doWatering(int pin) {
-  Serial.print("commencing watering!");
+  Serial.println("WATERING!");
   digitalWrite(pin, LOW);   // Turn the relay on
   delay(wateringDuration*1000);              // Water for 5 seconds (adjust as needed)
   digitalWrite(pin, HIGH);  // Turn the relay off
@@ -108,28 +108,28 @@ void setup() {
         if (doc.containsKey("command") && doc["command"] == "doWatering") {
           Serial.println("Triggering watering...");
           doWatering(relayPin);
+          ws.send(WebSocket::DataType::TEXT, "Plant watered successfully", strlen("Plant watered successfully"));
         }
 
         // Update other variables from the JSON message
         if (doc.containsKey("wateringDuration")) {
           wateringDuration = doc["wateringDuration"];
+          ws.send(WebSocket::DataType::TEXT, "Data received and processed", strlen("Data received and processed"));
         }
         if (doc.containsKey("wateringThreshold")) {
           wateringThreshold = doc["wateringThreshold"];
         }
         if (doc.containsKey("tankDepth")) {
           tankDepth = doc["tankDepth"];
+
+          // Log updated variables
+          Serial.print("Updated wateringDuration: ");
+          Serial.println(wateringDuration);
+          Serial.print("Updated wateringThreshold: ");
+          Serial.println(wateringThreshold);
+          Serial.print("Updated tankDepth: ");
+          Serial.println(tankDepth);
         }
-
-        ws.send(WebSocket::DataType::TEXT, "Data received and processed", strlen("Data received and processed"));
-
-        // Log updated variables
-        Serial.print("Updated wateringDuration: ");
-        Serial.println(wateringDuration);
-        Serial.print("Updated wateringThreshold: ");
-        Serial.println(wateringThreshold);
-        Serial.print("Updated tankDepth: ");
-        Serial.println(tankDepth);
       }
     });
 
@@ -180,7 +180,11 @@ void loop() {
         Serial.println("Connected to Spring Boot server");
 
         // Create JSON payload
-        String jsonPayload = "{\"temperature\":" + String(temp) + ",\"humidity\":" + String(hum) + ",\"moisture\":" + String(moisture) + ",\"waterLevel\":" + String(distance) + ",\"light\":" + String(luminance) + "}";
+        String jsonPayload = "{\"temperature\":" + String(temp)
+                              + ",\"humidity\":" + String(hum)
+                              + ",\"moisture\":" + String(moisture)
+                              + ",\"waterLevel\":" + String(distance)
+                              + ",\"light\":" + String(luminance) + "}";
 
         // Send HTTP POST request
         client.println("POST /api/v1/data HTTP/1.1");
