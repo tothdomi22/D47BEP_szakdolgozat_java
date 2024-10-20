@@ -1,0 +1,31 @@
+name: szakdolgozat
+
+services:
+  mysql-d47bep:
+    image: mariadb:10.9
+    #    image: mysql:8.0.27
+    container_name: mysql-d47bep
+    ports:
+      - "3306:3306"
+    expose:
+      - 3306
+    environment:
+      MYSQL_ROOT_PASSWORD: a
+    #    command: mysqld --default-authentication-plugin=mysql_native_password
+    volumes:
+      - mysql-d47bep:/var/lib/mysql
+
+  adminer-local:
+    image: adminer
+    container_name: adminer-local
+    ports:
+      - "29082:8080"
+    environment:
+      - ADMINER_DESIGN=lucas-sandery
+      - ADMINER_DEFAULT_SERVER=mysql-d47bep
+    depends_on:
+      - mysql-d47bep
+
+volumes:
+  mysql-d47bep:
+    driver: local
