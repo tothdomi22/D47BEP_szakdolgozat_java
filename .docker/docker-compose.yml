@@ -3,7 +3,6 @@ name: szakdolgozat
 services:
   mysql-d47bep:
     image: mariadb:10.9
-    #    image: mysql:8.0.27
     container_name: mysql-d47bep
     ports:
       - "3306:3306"
@@ -11,7 +10,6 @@ services:
       - 3306
     environment:
       MYSQL_ROOT_PASSWORD: a
-    #    command: mysqld --default-authentication-plugin=mysql_native_password
     volumes:
       - mysql-d47bep:/var/lib/mysql
 
@@ -23,6 +21,18 @@ services:
     environment:
       - ADMINER_DESIGN=lucas-sandery
       - ADMINER_DEFAULT_SERVER=mysql-d47bep
+    depends_on:
+      - mysql-d47bep
+
+  fastapi:
+    build:
+      context: .. # Set the root project directory as the build context
+      dockerfile: .docker/Dockerfile # Path to the Dockerfile inside the .docker folder
+    container_name: fastapi-service
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../python:/app # Map the "python" folder to /app inside the container
     depends_on:
       - mysql-d47bep
 

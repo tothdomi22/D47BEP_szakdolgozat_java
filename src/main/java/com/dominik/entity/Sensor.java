@@ -19,7 +19,8 @@ public class Sensor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @Column(name = "id", unique = true, nullable = false)
+    private long id;
 
     @Column(name = "temperature")
     private Double temperature;
